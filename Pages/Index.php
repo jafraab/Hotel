@@ -60,13 +60,14 @@ Noviembre 2016
         </script>
     </head>
     <body>
-      <div id="AppSidenav" class="sidenav" data-xp="close">        
-<!--        <a href="RegistroPasajeros.php?habitacion=0" class="sidenav-menu-item">Registro Pasajeros</a>-->
-        <a href="Habitaciones.php" class="sidenav-menu-item">Admin. Habitaciones</a>
-<!--        <a href="PaginaNoDisponible" class="sidenav-menu-item">Administraci&oacute;n</a>-->
-        <a href="Informes/IngresosDia.php" class="sidenav-menu-item">Informes</a>
-      </div>
-
+<div id="wrapper">
+    <div id="AppSidenav" class="sidenav" data-xp="close">        
+          <a href="Habitaciones.php" class="sidenav-menu-item">Admin. Habitaciones</a>
+          <a href="#" class="sidenav-menu-item" style="background-color: #0088cc;">Informes</a>
+          <a href="Informes/IngresosDia.php" class="sidenav-menu-item">Ingresos del diarios</a>
+          <a href="Informes/Pagos.php" class="sidenav-menu-item">Abonos y Pagos</a>
+    </div>
+</div>    
       <div id="main">
         <div style="width:100%; background-color: #206C9E;padding: 5px; color:#f1f1f1;">
             <span style="font-size:30px;cursor:pointer;" onclick="OpenCloseSideNav();">&#9776; Hotel Millahue</span>

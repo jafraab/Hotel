@@ -95,8 +95,7 @@ $_SESSION['FECHA_INGRESO'] = "";
                             window.location.href = data;
                         }
                     });
-                })
-                
+                });
             })
         </script>
     </head>

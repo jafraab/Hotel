@@ -23,8 +23,8 @@ session_start();
                         <option value="0"> Seleccione opci&oacute;n</option>  
                         <option value="1">Efectivo</option>
                         <option value="2">Tarjeta d&eacute;bito</option>
-                        <option value="2">Tarjeta cr&eacute;dito</option>
-                        <option value="2">Transferencia</option>
+                        <option value="3">Tarjeta cr&eacute;dito</option>
+                        <option value="4">Transferencia</option>
                     </select> 
                 </div>
             </div>
@@ -76,7 +76,7 @@ session_start();
             </div> 
             <br>
             <div class="row">
-                <div class='col-lg-3'>
+                <div class='col-lg-3' id="divSaveFP">
                     <input type="button" id="btnSaveFP" class="btn btn-success" value="Guardar"/>
                 </div>
             </div>            
@@ -84,38 +84,46 @@ session_start();
     </form>
 </div>
 <script>
-    
     var model ={
         ID_REGISTRO: $('#ID_REGISTRO').val(),
         ACCION:'QRY'
     };
     $.getJSON('../Controllers/FormasDePago.php',model, function(data){
-        $.each(data, function(){
-            $('input[name=TIPO_PAGO]:checked').val(data.tipo_pago);
-            $('#MODALIDAD_PAGO').val(data.modalidad_pago);
-            $('#VOUCHER').val(data.voucher);
-            $('#TIPO_DOCUMENTO').val(data.tipo_documento);
-            $('#NRO_DOCUMENTO_REFERENCIA').val(data.nro_documento_referencia);
-            $('#MONTO_CANCELADO').val(data.monto_cancelado);
-            var cancela = $('#MONTO_CANCELADO').val() || 0;
-            $('#SALDO').val($('#TOTAL').val() - cancela);
-            if($('#SALDO').val()=== 0){
-                $('#MONTO_CANCELADO').attr('readonly', true);
-            }
-        });
+        if(data !== null){
+            $.each(data, function(){
+                $('input[name=TIPO_PAGO]:checked').val(data.tipo_pago || 1);
+                $('#MODALIDAD_PAGO').val(data.modalidad_pago);
+                $('#VOUCHER').val(data.voucher);
+                $('#TIPO_DOCUMENTO').val(data.tipo_documento);
+                $('#NRO_DOCUMENTO_REFERENCIA').val(data.nro_documento_referencia);
+                $('#MONTO_CANCELADO').val(data.monto_cancelado);
+                $('#MONTO_ADEUDADO').val(data.monto_adeudado);
+                var cancela = $('#MONTO_CANCELADO').val() || 0;
+                $('#SALDO').val($('#MONTO_ADEUDADO').val() - cancela);
+                if(parseInt($('#SALDO').val())=== 0){
+                    $('#MONTO_CANCELADO').attr('readonly', true);
+                    $('#btnSaveFP').css('display', 'none'); 
+                    $('#divSaveFP').html('<h4 style="color:red;">El cliente no tiene deuda</h4>'); 
+                }
+            });
+        }
     });
     $('#MONTO_ADEUDADO').val($('#TOTAL').val());
     $('#MONTO_CANCELADO').focusout(function(){
         var cancela = $('#MONTO_CANCELADO').val() || 0;
+        if(parseInt(cancela) > parseInt($('#SALDO').val())){
+            alert('No se puede cancelar un moto mayor a lo que se adeuda');
+            $('#MONTO_CANCELADO').val($('#SALDO').val());
+        }
         $('#SALDO').val($('#TOTAL').val() - cancela);
     });
     $('#btnSaveFP').click(function(e){
         e.preventDefault();
-        if (!ValidateRequiredFields())
-        {
-            return false;
-        }
-        //alert($('#ID_REGISTRO').val());
+//        if (!ValidateRequiredFields())
+//        {
+//            return false;
+//        }
+
         var model = {
             ID_REGISTRO: $('#ID_REGISTRO').val(),
             TIPO_PAGO:$('input[name=TIPO_PAGO]:checked').val(),

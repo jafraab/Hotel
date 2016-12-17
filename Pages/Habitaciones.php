@@ -17,14 +17,25 @@ try {
             , habitaciones.tipo
             , habitaciones.camas
             , t1.estado
+            , ifnull(t2.id_registro, 0) id_registro
             from hot_habitaciones habitaciones
             left join
             (
             select mov.habitacion, mov.estado from hot_habitaciones_mov mov
             where mov.fecha_mov in (select max(fecha_mov) from hot_habitaciones_mov where habitacion = mov.habitacion)
             ) t1 on t1.habitacion = habitaciones.habitacion
+            left join 
+            (
+            select registro.habitacion, ifnull(max(registro.id_registro), 0) id_registro from hot_regpas registro 
+            where registro.habitacion 
+            in 
+            (
+                select mov_e.habitacion from hot_habitaciones_mov mov_e
+                where mov_e.fecha_mov in (select max(fecha_mov) from hot_habitaciones_mov where habitacion = mov_e.habitacion and mov_e.estado = 'OCUPADA') 
+            ) group by habitacion            
+            ) t2 on t2.habitacion = habitaciones.habitacion
             UNION
-            SELECT max(piso) + 1 piso, 99 habitacion, '' tipo, 99 camas, ' ' estado FROM hotel.hot_habitaciones    
+            SELECT max(piso) + 1 piso, 99 habitacion, '' tipo, 99 camas, ' ' estado, 0 id_registro FROM hotel.hot_habitaciones    
             ) habitaciones order by habitaciones.piso, habitaciones.habitacion
             ";
         $db = new Db();
@@ -44,7 +55,7 @@ try {
                 }
                 $estado = (($row['estado'] == "LIBRE") || (empty($row['estado']) || is_null($row['estado']))) ? 'LIBRE' : $row['estado'];
                 $htmlcode .=
-                 "<div data-value='".$row['habitacion']."' data-type='".$estado."' title='".$row['estado']."'>".
+                 "<div data-value='".$row['habitacion']."' data-type='".$estado."' title='".$row['estado']."' data-transaction_id='".$row['id_registro']."'>".
                  "<div>".
                  "Habitaci&oacute;n".
                  "<div class='title'>".$row['habitacion']."</div>".
@@ -72,31 +83,49 @@ try {
             var targetlink = 'RegistroPasajeros.php';
             $('.content').load(targetlink);
             return false;
-        });  
+        });          
     });
     $(function(){
+        var diagfp = $('#formasdepago').dialog({
+            autoOpen: false,
+            height: screen.availHeight * 75 /100,
+            width: screen.availWidth * 50 /100,
+            modal: true
+        });        
         $.contextMenu({
             selector: '.flex > div:nth-child(n)', 
             trigger: 'right',
             delay: 500,
-            callback: function(key) {
-                $.ajax({
-                   type:'GET',
-                   url:'../Controllers/SetEstadoHabitaciones.php?habitacion='+$(this).data('value')+'&proceso='+key,
-                   datatype:'text',
-                   success: function(data){
-                       $('.content').load('Habitaciones.php');
-                       alert(data);
-                   }
-                });
+            itemClickEvent:'click',
+            autoHide: true,
+            callback:function(key, options) {
+                if(key==='AGREGARPAGO'){
+                    $("#ID_REGISTRO").val($(this).data('transaction_id'));
+                    $('#formasdepago').load('FormasDePago.php');
+                    diagfp.dialog('open');
+                    //return false;
+                }else{
+                    $.ajax({
+                       type:'GET',
+                       url:'../Controllers/SetEstadoHabitaciones.php?habitacion='+$(this).data('value')+'&proceso='+key,
+                       datatype:'text',
+                       success: function(data){
+                           $('.content').load('Habitaciones.php');
+                           alert(data);
+                       }
+                    });   
+                }
             },
             items: {
             "LIBRE": {name: "Liberar", icon: "greenflag"},
             "LIMPIEZA": {name: "En proceso de aseo", icon: "clean"},
             "MANTENIMIENTO": {name: "Mantenimiento", icon: "cog"},
+            "AGREGARPAGO": {name: "Agregar Pago", icon: "pay"},
             "CHECKOUT": {name: "CheckOut", icon: "checkout"}
         }
         });
 });
     
 </script>
+<input type="hidden" id="ID_REGISTRO" name="ID_REGISTRO" value="0"/>
+<div id="formasdepago"></div>

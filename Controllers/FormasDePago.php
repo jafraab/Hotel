@@ -48,7 +48,33 @@ function AddNew(){
     echo $msg;
 }
 function SelById($p_idregistro){
-    $q_MyCmd = "SELECT hotel.hot_formas_de_pago.*, hot_regpas.dias_estadia * valor_pp adeudado FROM hotel.hot_formas_de_pago inner join hot_regpas on hot_regpas.id_registro = hot_formas_de_pago.id_registro where hotel.hot_formas_de_pago.id_registro = " .$p_idregistro;
+    $q_MyCmd =
+    "           
+    SELECT 
+    hotel.hot_regpas.id_registro
+    , ifnull(hotel.hot_formas_de_pago.tipo_pago, 1) tipo_pago
+    , ifnull(hotel.hot_formas_de_pago.modalidad_pago, 0) modalidad_pago
+    , ifnull(hotel.hot_formas_de_pago.voucher, 0) voucher
+    , ifnull(hotel.hot_formas_de_pago.tipo_documento, 0) tipo_documento
+    , ifnull(hotel.hot_formas_de_pago.nro_documento_referencia, 0) nro_documento_referencia
+    , hotel.hot_regpas.dias_estadia * valor_pp monto_adeudado 
+    , ifnull(pagos.monto_cancelado, 0) monto_cancelado
+    FROM hotel.hot_regpas
+    left join hot_formas_de_pago on hot_regpas.id_registro = hot_formas_de_pago.id_registro 
+    left join 
+    (
+        select abonos.id_registro, ifnull(sum(abonos.monto_cancelado), 0) monto_cancelado from hotel.hot_formas_de_pago abonos group by abonos.id_registro
+    ) pagos on pagos.id_registro = hotel.hot_formas_de_pago.id_registro
+    where hotel.hot_regpas.id_registro = ".$p_idregistro."
+    group by
+    hotel.hot_formas_de_pago.id_registro
+    , hotel.hot_formas_de_pago.tipo_pago
+    , hotel.hot_formas_de_pago.modalidad_pago
+    , hotel.hot_formas_de_pago.voucher
+    , hotel.hot_formas_de_pago.tipo_documento
+    , hotel.hot_formas_de_pago.nro_documento_referencia
+    , pagos.monto_cancelado
+    ";
     $db = new Db();
     $resultset = $db->ExecQuery($q_MyCmd);
     return $resultset;
