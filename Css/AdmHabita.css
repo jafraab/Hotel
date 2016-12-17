@@ -1,0 +1,104 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 07-dic-2016, 21:08:50
+    Author     : LENOVO
+*/
+
+
+   .flex{
+      /* basic styling */
+      width: 720px;
+      height: 100px;
+      border: 0px solid #555;
+      color: #f5f5f5;
+      margin:0 auto;
+      vertical-align: central;
+
+      /* flexbox setup */
+      display: -webkit-flex;
+      -webkit-flex-direction: row;
+
+      display: flex;
+      flex-direction: row;
+      margin-bottom: 20px;
+   }
+   .flex .title{font: 14px Arial;}
+   .flex .subtitle{font: 10px Arial;}
+   .flex > div{
+	  -webkit-flex: 1 1 auto;
+	  -moz-flex: 1 1 auto;
+	  flex: 1 1 auto;
+	  padding: 5px;
+	  width: 100px;
+	  max-width: 100px;
+	  min-width: 100px;
+	  -webkit-transition: width 0.7s ease-out;
+	  transition: width 0.7s ease-out;
+   }
+   .flex > div:nth-child(n) { 
+        /* Gradiente */
+		/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#1a820a+3,46992f+63,5a9949+100 */
+        background: rgb(20, 201, 35);
+        background: -moz-linear-gradient(top, rgb(27, 207, 29) 0%, rgb(44, 204, 34) 24%, rgb(41, 183, 42) 69%, rgb(28, 186, 35) 73%, rgb(96, 209, 98) 86%);
+        background: -webkit-linear-gradient(top, #1a820a 3%,#46992f 63%,#5a9949 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #1a820a 3%,#46992f 63%,#5a9949 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1a820a', endColorstr='#5a9949',GradientType=0 ); /* IE6-9 */
+        /*Bordes*/
+        border-radius: 5px 5px 5px 5px;
+		-moz-border-radius: 5px 5px 5px 5px;
+		-webkit-border-radius: 5px 5px 5px 5px;
+        /*General*/
+	   	margin:1px;
+	   	float: left;
+   }
+   .flex > div:nth-child(n)[data-type='OCUPADA']{
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#cf0404+0,ff3019+77 */
+        background: #cf0404; /* Old browsers */
+        background: -moz-linear-gradient(top, #cf0404 0%, #ff3019 77%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, #cf0404 0%,#ff3019 77%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #cf0404 0%,#ff3019 77%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cf0404', endColorstr='#ff3019',GradientType=0 ); /* IE6-9 */ 
+   }
+   .flex > div:nth-child(n)[data-type='LIMPIEZA']{
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffff38+0,ffff8e+100 */
+        background: #ffff38; /* Old browsers */
+        background: -moz-linear-gradient(top, #ffff38 0%, #ffff8e 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, #ffff38 0%,#ffff8e 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #ffff38 0%,#ffff8e 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffff38', endColorstr='#ffff8e',GradientType=0 ); /* IE6-9 */
+        color:gray;
+   }
+   .flex > div:nth-child(n)[data-type='CHECKOUT']{
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffff38+0,ffff8e+100 */
+        background: #ffff38; /* Old browsers */
+        background: -moz-linear-gradient(top, #ffff38 0%, #ffff8e 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, #ffff38 0%,#ffff8e 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #ffff38 0%,#ffff8e 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffff38', endColorstr='#ffff8e',GradientType=0 ); /* IE6-9 */
+        color:gray;
+   }
+   .flex > div:nth-child(n)[data-type='MANTENIMIENTO']{
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f79621+0,f9c667+100 */
+        background: #f79621; /* Old browsers */
+        background: -moz-linear-gradient(top, #f79621 0%, #f9c667 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, #f79621 0%,#f9c667 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #f79621 0%,#f9c667 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f79621', endColorstr='#f9c667',GradientType=0 ); /* IE6-9 */      
+   }
+   .flex > div:nth-child(n):hover { 
+   		cursor: pointer; 
+   		opacity: 0.9; 
+		-webkit-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.75);
+		-moz-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.75);
+		box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.75);
+   	}
+   .flex > div:nth-child(n) > div:nth-child(1){ 
+	   	background-color: transparent;
+	   	height: 85%;
+	   	padding: 0.06rem;
+	   	margin-bottom:3px;
+   }   
