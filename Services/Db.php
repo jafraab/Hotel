@@ -1,13 +1,13 @@
 <?php
     require_once ('AppApi.php');
     class Db{
-        protected $host="192.168.1.100";
-        //protected $host="localhost";
+        //protected $host="192.168.1.100";
+        protected $host="localhost";
         protected $port=3306;
         protected $socket="";
         protected $user="hotel";
         //protected $password="hot@2016";
-        protected $password="hot@2016";
+        protected $password="hot2016";
         protected $dbname="hotel";
         protected $connection;
         
