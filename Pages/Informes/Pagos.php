@@ -25,36 +25,16 @@
             var model = {
                 ACCION: 'QRY_Pagos'
             };
-            $.getJSON('../Controllers/Pagos.php',model, function(data){
-                var tbdataview ="";
-                $('#DataResult').html(tbdataview);
-                tbdataview +="<table class='table table-bordered' data-type='dataview' id='dataresult'>";
-                tbdataview +="<thead style='background-color:#DAE1E5;'>";
-                tbdataview +="<th>Fecha</th>";
-                tbdataview +="<th>Cliente</th>";
-                tbdataview +="<th>Habitaci&oacute;n</th>";
-                tbdataview +="<th>D&iacute;as Estad&iacute;a</th>";
-                tbdataview +="<th>Valor</th>";
-                tbdataview +="<th>Valor Total</th>";
-                tbdataview +="<th>Abonos</th>";
-                tbdataview +="</tr>";
-                tbdataview +="</thead>";
-                tbdataview +="<tbody>";          
-                $.each(data, function(){
-                    tbdataview +="<tr>";
-                    tbdataview +="<td>"+data.id_cliente+"</td>";
-                    tbdataview +="<td>"+data.fecha+"</td>";
-                    tbdataview +="<td>"+data.habitacion+"</td>";
-                    tbdataview +="<td>"+data.dias_estadia+"</td>";
-                    tbdataview +="<td>"+data.valor_pp+"</td>";
-                    tbdataview +="<td>"+data.total_adeudado+"</td>";
-                    tbdataview +="<td>"+data.abonos+"</td>";
-                    tbdataview +="</tr>";                    
-                });
-                tbdataview +="</tbody>";
-                tbdataview +="</table>";
-                $('#DataResult').html(tbdataview);                   
-            });
+
+            $.ajax({
+                url: '../Controllers/Pagos.php',
+                data: model,
+                dataType: 'text',
+                type: 'GET',
+                success: function (data) {
+                   $('#DataResult').html(data);  
+                }
+            });                                   
         });        
     });
 </script>

@@ -7,11 +7,11 @@
  */
 require_once ('../Services/Db.php');
 session_start();
-
+$idregistro = filter_input(INPUT_GET, 'idregistro');
 $habitacion = filter_input(INPUT_GET, 'habitacion');
 $proceso    = filter_input(INPUT_GET, 'proceso'); 
 try{
-$My_cmd = "INSERT INTO hotel.hot_habitaciones_mov(habitacion, estado) VALUES(".$habitacion.",'".$proceso."')";
+$My_cmd = "INSERT INTO hotel.hot_habitaciones_mov(id_registro, habitacion, estado) VALUES(".$idregistro.",".$habitacion.",'".$proceso."')";
 $db = new Db();
 $cmd_result = $db->ExecProc($My_cmd);
 if($cmd_result){

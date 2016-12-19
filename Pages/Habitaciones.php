@@ -107,7 +107,7 @@ try {
                 }else{
                     $.ajax({
                        type:'GET',
-                       url:'../Controllers/SetEstadoHabitaciones.php?habitacion='+$(this).data('value')+'&proceso='+key,
+                       url:'../Controllers/SetEstadoHabitaciones.php?habitacion='+$(this).data('value')+'&proceso='+key+'&idregistro='+$(this).data('transaction_id'),
                        datatype:'text',
                        success: function(data){
                            $('.content').load('Habitaciones.php');

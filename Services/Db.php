@@ -6,8 +6,8 @@
         protected $port=3306;
         protected $socket="";
         protected $user="hotel";
-        //protected $password="hot@2016";
-        protected $password="hot2016";
+        protected $password="hot@2016";
+        //protected $password="hot2016";
         protected $dbname="hotel";
         protected $connection;
         
