@@ -18,57 +18,17 @@ Noviembre 2016
 <script src="../Scripts/AppApi.js" type="text/javascript"></script>
 <script>
     $(document).ready(function(){
-        //Functions
-        function RegPasEx(){
-            var valid = true;
-            if ( valid ) {
-              $( "#PASEX tbody" ).append( 
-                "<tr>" +
-                  "<td>" + $('#NOM_PASEX').val() + "</td>" +
-                  "<td>" + $('#TELEFONO_PASEX').val() + "</td>" +
-                "</tr>" );
-            }
-            return valid;
-        }
-        function tableToJson(table){
-            var jsObj = [],
-                tbDataRows = $(table).find('tbody tr');
-            if (tbDataRows.length > 0) {
-                for (rows = 0; rows < tbDataRows.length; rows++) {
-                    rowscols = $(tbDataRows).eq(rows).find('td');
-                    if (rowscols.length > 0) {
-                        debugger;
-                        var obj = {};
-                        for (cols = 0; cols < rowscols.length; cols++) {
-                            key = $(table.find('thead tr')[0]).find('th').eq(cols).attr('id');
-                            //if (key != null) {
-                                value = $(rowscols).eq(cols).text();
-                                obj[key] = value;
-                            //}
-                        }
-                        jsObj.push(obj);
-                    }
-                }
-            }
-            return JSON.stringify(jsObj);
-        }
         //Settings  
         $('#btnFormaDePago').hide();
-        if(window.sharedVariable !== null || window.sharedVariable !== ' '){
-            $('#HABITACION').val(window.sharedVariable);
-        }        
-//        var dialog = $('#scrAddPas').dialog({
-//            autoOpen: false,
-//            height: 280,
-//            width: 600,
-//            modal: true,
-//            buttons: {
-//                "Registrar": RegPasEx,
-//                Cerrar: function() {
-//                    dialog.dialog( "close" );
-//                }
-//            }
-//        });
+        if(parseInt(global.Habitacion) > 0){
+            $('#HABITACION').val(global.Habitacion).attr('readonly', true);
+        }
+        if(parseInt(global.idtransaction) > 0){
+            $('#ID_REGISTRO').val(global.idtransaction);
+            $('div.caption').find('strong').html(' [ID: '+$('#ID_REGISTRO').val()+']');
+            $('#btnGuardar').remove();
+            $('#btnLimpiar').remove();
+        }
         var diagfp = $('#formasdepago').dialog({
             autoOpen: false,
             height: screen.availHeight * 75 /100,
@@ -128,14 +88,14 @@ Noviembre 2016
             });
         });
         $('#btnPrint').click(function(){
-            //var form = $('#frmRegPas');
-            //var formData = new FormData(form[0]);
-
+            model={
+                ID_REGISTRO: $('#ID_REGISTRO').val()
+            };
             $.ajax({
                 url: '../Controllers/RegistroPasajerosToPdf.php',
-                data: '123',
+                data: model,
                 dataType: 'text',
-                type: 'POST',
+                type:'GET',
                 success: function (data) {
                    window.location.href = data;
                 }
@@ -170,7 +130,7 @@ Noviembre 2016
 <form method="post" role="form" id='frmRegPas' class='form-horizontal' action="../Controllers/RegistroPasajeros.php">
     <input type="hidden" id="ACCION" name="ACCION" value="ADD"/>    
     <input type="hidden" id="ID_REGISTRO" name="ID_REGISTRO" value="0"/>    
-    <div class="caption"><b>Registro de Pasajeros</b></div>
+    <div class="caption"><b>Registro de Pasajeros</b><strong></strong></div>
     <hr>
     <div class="caption">Datos del Pasajero</div>
     <div class="form-group" >

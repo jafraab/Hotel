@@ -77,14 +77,23 @@ try {
 <script src="../Scripts/contextmenu/js/jquery.ui.position.js" type="text/javascript"></script>
 <script src="../Scripts/jquery/jquery-ui.js" type="text/javascript"></script>
 <script>
-    $(document).ready(function(){       
+    $(document).ready(function(){      
+        window.global={};
+        global.Habitacion = 0;
+        global.idtransaction=0
         $('div[data-type="LIBRE"]').on('click', function(){
-            window.sharedVariable = $(this).data('value');
+            global.Habitacion = $(this).data('value');
             var targetlink = 'RegistroPasajeros.php';
             $('.content').load(targetlink);
             return false;
-        });          
-    });
+        });   
+        $('div[data-type="OCUPADA"]').on('click', function(){
+                global.idtransaction = $(this).data('transaction_id');
+                var targetlink = 'RegistroPasajeros.php';
+                $('.content').load(targetlink);
+                return false;
+            });                  
+        });
     $(function(){
         var diagfp = $('#formasdepago').dialog({
             autoOpen: false,

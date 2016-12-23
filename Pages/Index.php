@@ -25,7 +25,6 @@ Noviembre 2016
                 $('.content').load('Habitaciones.php');
                 $('.sidenav-menu-item').click(function(e){
                     e.preventDefault();
-                    window.sharedVariable = null;
                     $.ajax(
                     {
                         type: "get",

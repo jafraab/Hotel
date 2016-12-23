@@ -10,6 +10,7 @@ require_once('../Classes/fpdf.php');
 
 //if(($_SERVER["REQUEST_METHOD"] === "POST")){
     try {
+        $id_registro = filter_input(INPUT_GET, 'ID_REGISTRO');
         $q_MyCmd = 
         "            
         SELECT PASAJEROS.*, 
@@ -23,7 +24,8 @@ require_once('../Classes/fpdf.php');
         (dias_estadia * valor_pp) TOTAL
         FROM hot_regpas PASAJEROS 
         INNER JOIN hot_clientes CLIENTES ON CLIENTES.ID_CLIENTE = PASAJEROS.ID_CLIENTE
-        WHERE PASAJEROS.id_registro  IN (select IFNULL(max(hot_regpas.id_registro), 0) id_registro from hot_regpas)";
+        WHERE PASAJEROS.id_registro = ".$id_registro; 
+        //IN (select IFNULL(max(hot_regpas.id_registro), 0) id_registro from hot_regpas)";
         $db = new Db();
         $resultset = $db->ExecQuery($q_MyCmd);
         if($resultset->num_rows > 0) {
@@ -40,8 +42,8 @@ require_once('../Classes/fpdf.php');
             $doc->Image('../Images/Logo_Millahue.jpg',10,10,-300);
             $doc->SetX(70);
             //$this->Cell( $defaultcellwidth, 10, $doc->Image('../Images/Logo_Millahue.jpg', $doc->GetX(), $doc->GetY(), -300), 0, 0, 'L', false );
-            $title = 'Comprobante de Registro';
-            $doc->Cell(0, 10, $title, 0, 0, 'L');
+            $title = 'Comprobante de Registro ID: '.$r["id_registro"];
+            $doc->Cell(0, 10, $title, 0, 0, 'C');
             
             $doc->Line($x_axis_initial, $y_axis_initial, $doc->GetPageWidth()-10, $y_axis_initial);
             
