@@ -12,7 +12,7 @@ and open the template in the editor.
    .flex{
       /* basic styling */
       width: 720px;
-      height: 100px;
+      height: 110px;
       border: 0px solid #555;
       color: #f5f5f5;
       margin:0 auto;
@@ -101,4 +101,16 @@ and open the template in the editor.
 	   	height: 85%;
 	   	padding: 0.06rem;
 	   	margin-bottom:3px;
-   }   
+   }  
+   .selected { 
+        -webkit-box-shadow: 0px 0px 9px 4px rgba(30,24,189,1);
+        -moz-box-shadow: 0px 0px 9px 4px rgba(30,24,189,1);
+        box-shadow: 0px 0px 9px 4px rgba(30,24,189,1);
+   }
+   .toolbar{
+       width: 720px;
+       margin:0 auto;
+       margin-bottom: 20px;
+       vertical-align: central;
+   }
+   

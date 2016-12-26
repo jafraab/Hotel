@@ -1,3 +1,13 @@
+<div class="Hotel">
+    <div class="toolbar">
+        <div class="toolbuttoncontainer btn-group">
+            <input type="button" class="btn btn-default toolbutton green-flag32x32"/>
+            <input type="button" class="btn btn-default toolbutton clean32x32"/>
+            <input type="button" class="btn btn-default toolbutton cog32x32"/>
+            <input type="button" class="btn btn-default toolbutton pay32x32"/>
+            <input type="button" class="btn btn-default toolbutton checkout32x32"/>
+        </div>        
+    </div>
 <?php
 session_start();
 require_once ('../Services/AppApi.php');
@@ -55,6 +65,7 @@ try {
                 }
                 $estado = (($row['estado'] == "LIBRE") || (empty($row['estado']) || is_null($row['estado']))) ? 'LIBRE' : $row['estado'];
                 $htmlcode .=
+                 
                  "<div data-value='".$row['habitacion']."' data-type='".$estado."' title='".$row['estado']."' data-transaction_id='".$row['id_registro']."'>".
                  "<div>".
                  "Habitaci&oacute;n".
@@ -68,6 +79,7 @@ try {
         }
 }catch (Exception $ex) { echo  $ex->getMessage(); }
 ?>
+</div>
 <div id="dialog"></div>
 <link href="../Css/AdmHabita.css" rel="stylesheet" type="text/css"/>
 <link href="../Scripts/contextmenu/css/jquery.contextMenu.css" rel="stylesheet" type="text/css"/>
@@ -77,10 +89,17 @@ try {
 <script src="../Scripts/contextmenu/js/jquery.ui.position.js" type="text/javascript"></script>
 <script src="../Scripts/jquery/jquery-ui.js" type="text/javascript"></script>
 <script>
-    $(document).ready(function(){      
+    $(document).ready(function(){
         window.global={};
         global.Habitacion = 0;
-        global.idtransaction=0
+        global.idtransaction=0;
+        $('.flex > div:nth-child(n)').click(function(){
+            $('.flex > div:nth-child(n)').removeClass('selected');
+            global.Habitacion = $(this).data('value');
+            global.idtransaction=$(this).data('transaction_id');
+            $(this).addClass('selected');
+        });
+        /*
         $('div[data-type="LIBRE"]').on('click', function(){
             global.Habitacion = $(this).data('value');
             var targetlink = 'RegistroPasajeros.php';
@@ -92,8 +111,9 @@ try {
                 var targetlink = 'RegistroPasajeros.php';
                 $('.content').load(targetlink);
                 return false;
-            });                  
-        });
+        });*/
+    });
+        
     $(function(){
         var diagfp = $('#formasdepago').dialog({
             autoOpen: false,
