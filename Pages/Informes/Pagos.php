@@ -34,7 +34,7 @@
         };
         $.getJSON('../Controllers/Clientes',model, function(data){
             var html_c = '<select class="form-control" id="clientesselect">';
-            html_c += '<option> Selecciona Cliente [Opcional]</option>'
+            html_c += '<option> Selecciona Cliente [Opcional]</option>';
             $.each(data, function(i, item){  
                 html_c += '<option value="'+item.id_cliente+'">';
                 html_c += item.nombre_cliente;

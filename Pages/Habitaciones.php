@@ -1,12 +1,24 @@
 <div class="Hotel">
     <div class="toolbar">
-        <div class="toolbuttoncontainer btn-group">
-            <input type="button" class="btn btn-default toolbutton green-flag32x32"/>
-            <input type="button" class="btn btn-default toolbutton clean32x32"/>
-            <input type="button" class="btn btn-default toolbutton cog32x32"/>
-            <input type="button" class="btn btn-default toolbutton pay32x32"/>
-            <input type="button" class="btn btn-default toolbutton checkout32x32"/>
+        <div class="toolbuttoncontainer btn-group" style="margin-right: 10px;">
+            <input id="btnCheckIn" data-action="CHECKIN" type="button" class="btn btn-default toolbutton checkin32x32" title="Registar pasajero en esta habitaci&oacute;n"/>
+        </div>
+        <div class="toolbuttoncontainer btn-group" style="margin-right: 10px;">
+            <input id="btnRoomChange" data-action="CAMBIAR" type="button" class="btn btn-default toolbutton roomchange32x32" title="Trasladar pasajero a otra habitaci&oacute;n"/>
+        </div>
+        <div class="toolbuttoncontainer btn-group" style="margin-right: 10px;">
+            <input id="btnAgregarPago" data-action="AGREGARPAGO"  type="button" class="btn btn-default toolbutton pay32x32" title="Registrar pago o abono"/>
+        </div>
+        <div class="toolbuttoncontainer btn-group" style="margin-right: 10px;">
+            <input id="btnCheckout" data-action="CHECKOUT" type="button" class="btn btn-default toolbutton checkout32x32" title="CheckOut"/>
+            <input id="btnLimpieza" data-action="LIMPIEZA" type="button" class="btn btn-default toolbutton clean32x32" title="Pasar a proceso de limpieza"/>
+            <input id="btnMantenimiento" data-action="MANTENIMIENTO"  type="button" class="btn btn-default toolbutton cog32x32" title="Marcar en mantenimiento"/>
+            <input id="btnLeberar" data-action="LIBRE" type="button" class="btn btn-default toolbutton green-flag32x32" title="Liberar"/>            
         </div>        
+        <div class="toolbuttoncontainer btn-group" style="margin-right: 10px;">
+            <input id="btnRefresh" data-action="REFRESHPAGE"  type="button" class="btn btn-default toolbutton refresh32x32" title="Refrescar p&aacute;gina"/>
+        </div>
+
     </div>
 <?php
 session_start();
@@ -90,70 +102,113 @@ try {
 <script src="../Scripts/jquery/jquery-ui.js" type="text/javascript"></script>
 <script>
     $(document).ready(function(){
-        window.global={};
-        global.Habitacion = 0;
-        global.idtransaction=0;
-        $('.flex > div:nth-child(n)').click(function(){
-            $('.flex > div:nth-child(n)').removeClass('selected');
-            global.Habitacion = $(this).data('value');
-            global.idtransaction=$(this).data('transaction_id');
-            $(this).addClass('selected');
-        });
-        /*
-        $('div[data-type="LIBRE"]').on('click', function(){
-            global.Habitacion = $(this).data('value');
-            var targetlink = 'RegistroPasajeros.php';
-            $('.content').load(targetlink);
-            return false;
-        });   
-        $('div[data-type="OCUPADA"]').on('click', function(){
-                global.idtransaction = $(this).data('transaction_id');
-                var targetlink = 'RegistroPasajeros.php';
-                $('.content').load(targetlink);
-                return false;
-        });*/
-    });
-        
-    $(function(){
+        function ctrlkeyHandler(ev){return ev.ctrlkey};
         var diagfp = $('#formasdepago').dialog({
             autoOpen: false,
             height: screen.availHeight * 75 /100,
             width: screen.availWidth * 50 /100,
             modal: true
         });        
-        $.contextMenu({
-            selector: '.flex > div:nth-child(n)', 
-            trigger: 'right',
-            delay: 500,
-            itemClickEvent:'click',
-            autoHide: true,
-            callback:function(key, options) {
-                if(key==='AGREGARPAGO'){
-                    $("#ID_REGISTRO").val($(this).data('transaction_id'));
-                    $('#formasdepago').load('FormasDePago.php');
-                    diagfp.dialog('open');
-                    //return false;
-                }else{
-                    $.ajax({
-                       type:'GET',
-                       url:'../Controllers/SetEstadoHabitaciones.php?habitacion='+$(this).data('value')+'&proceso='+key+'&idregistro='+$(this).data('transaction_id'),
-                       datatype:'text',
-                       success: function(data){
-                           $('.content').load('Habitaciones.php');
-                           alert(data);
-                       }
-                    });   
-                }
-            },
-            items: {
-            "LIBRE": {name: "Liberar", icon: "greenflag"},
-            "LIMPIEZA": {name: "En proceso de aseo", icon: "clean"},
-            "MANTENIMIENTO": {name: "Mantenimiento", icon: "cog"},
-            "AGREGARPAGO": {name: "Agregar Pago", icon: "pay"},
-            "CHECKOUT": {name: "CheckOut", icon: "checkout"}
-        }
+        window.global={};
+        global.Habitacion = 0;
+        global.idtransaction=0;
+        
+        $('.flex > div:nth-child(n)').click(function(event){
+            alert(event.button);
+            $('.flex > div:nth-child(n).selected').removeClass('selected');
+            global.Habitacion = $(this).data('value');
+            global.idtransaction=$(this).data('transaction_id');
+            $(this).addClass('selected');
         });
-});
+        $('input[class~="toolbutton"]').click(function(){
+            if($(this).data('action')==='REFRESHPAGE'){$('.flex > div:nth-child(n).selected').removeClass('selected'); return;}
+             var _div = $('div .selected');
+             if( _div.length > 0){
+                if(confirm("\u00BFConfirma que desea realizar acci\u00F3n sobre habitaci\u00F3n seleccionada?")){
+                    switch($(this).data('action')){
+                        case 'CHECKIN':
+                            var targetlink = 'RegistroPasajeros.php';
+                            $('.content').load(targetlink);
+                            return false;
+                            break;
+                        case 'AGREGARPAGO':
+                            if(_div.data('type')!=='OCUPADA'){
+                                alert('No puede realizar esta acci\u00F3n sobre una habitaci\u00F3n desocupada');
+                                break;
+                            }
+                            $("#ID_REGISTRO").val(_div.data('transaction_id'));
+                            $('#formasdepago').load('FormasDePago.php');
+                            diagfp.dialog('open');                        
+                            break;
+                        case 'CAMBIAR': 
+                            if(_div.data('type')!=='OCUPADA'){
+                                alert('No puede realizar esta acci\u00F3n sobre una habitaci\u00F3n desocupada');
+                                break;
+                            }
+                            break;
+                        default:
+                            if($(this).data('action')==='CHECKOUT' && _div.data('type')!=='OCUPADA'){
+                                alert('No puede realizar esta acci\u00F3n sobre una habitaci\u00F3n desocupada');
+                                break;
+                            }                            
+                            $.ajax({
+                               type:'GET',
+                               url:'../Controllers/SetEstadoHabitaciones.php?habitacion='+_div.data('value')+'&proceso='+$(this).data('action')+'&idregistro='+_div.data('transaction_id'),
+                               datatype:'text',
+                               success: function(data){
+                                   $('.content').load('Habitaciones.php');
+                                   alert(data);
+                               }
+                            });                               
+                            break;
+                    }
+                }
+             }else{
+                 alert('Debe seleccionar habitaci\u00F3n');
+             }
+        });
+    });
+        
+//    $(function(){
+//        var diagfp = $('#formasdepago').dialog({
+//            autoOpen: false,
+//            height: screen.availHeight * 75 /100,
+//            width: screen.availWidth * 50 /100,
+//            modal: true
+//        });        
+//        $.contextMenu({
+//            selector: '.flex > div:nth-child(n)', 
+//            trigger: 'right',
+//            delay: 500,
+//            itemClickEvent:'click',
+//            autoHide: true,
+//            callback:function(key, options) {
+//                if(key==='AGREGARPAGO'){
+//                    $("#ID_REGISTRO").val($(this).data('transaction_id'));
+//                    $('#formasdepago').load('FormasDePago.php');
+//                    diagfp.dialog('open');
+//                    //return false;
+//                }else{
+//                    $.ajax({
+//                       type:'GET',
+//                       url:'../Controllers/SetEstadoHabitaciones.php?habitacion='+$(this).data('value')+'&proceso='+key+'&idregistro='+$(this).data('transaction_id'),
+//                       datatype:'text',
+//                       success: function(data){
+//                           $('.content').load('Habitaciones.php');
+//                           alert(data);
+//                       }
+//                    });   
+//                }
+//            },
+//            items: {
+//            "LIBRE": {name: "Liberar", icon: "greenflag"},
+//            "LIMPIEZA": {name: "En proceso de aseo", icon: "clean"},
+//            "MANTENIMIENTO": {name: "Mantenimiento", icon: "cog"},
+//            "AGREGARPAGO": {name: "Agregar Pago", icon: "pay"},
+//            "CHECKOUT": {name: "CheckOut", icon: "checkout"}
+//        }
+//        });
+//});
     
 </script>
 <input type="hidden" id="ID_REGISTRO" name="ID_REGISTRO" value="0"/>
