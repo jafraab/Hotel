@@ -102,7 +102,6 @@ try {
 <script src="../Scripts/jquery/jquery-ui.js" type="text/javascript"></script>
 <script>
     $(document).ready(function(){
-        function ctrlkeyHandler(ev){return ev.ctrlkey};
         var diagfp = $('#formasdepago').dialog({
             autoOpen: false,
             height: screen.availHeight * 75 /100,
@@ -113,8 +112,7 @@ try {
         global.Habitacion = 0;
         global.idtransaction=0;
         
-        $('.flex > div:nth-child(n)').click(function(event){
-            alert(event.button);
+        $('.flex > div:nth-child(n)').click(function(){
             $('.flex > div:nth-child(n).selected').removeClass('selected');
             global.Habitacion = $(this).data('value');
             global.idtransaction=$(this).data('transaction_id');
@@ -145,6 +143,8 @@ try {
                                 alert('No puede realizar esta acci\u00F3n sobre una habitaci\u00F3n desocupada');
                                 break;
                             }
+                            var targetlink = 'CambioHabitacion.php';
+                            $('.content').load(targetlink);
                             break;
                         default:
                             if($(this).data('action')==='CHECKOUT' && _div.data('type')!=='OCUPADA'){

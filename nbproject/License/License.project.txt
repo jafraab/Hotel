@@ -1,0 +1,7 @@
+/*
+Proyecto: ${project.displayName} 
+Archivo: ${nameAndExt}
+Autor: Jaime Altamirano Bustamante
+Fecha: ${date} ${time}
+*/
+
