@@ -2,6 +2,7 @@
     <div class="toolbar">
         <div class="toolbuttoncontainer btn-group" style="margin-right: 10px;">
             <input id="btnCheckIn" data-action="CHECKIN" type="button" class="btn btn-default toolbutton checkin32x32" title="Registar pasajero en esta habitaci&oacute;n"/>
+            <input id="btnPrintCM" data-action="PRINTCM" type="button" class="btn btn-default toolbutton print32x32" title="Imprimir comanda"/>
         </div>
         <div class="toolbuttoncontainer btn-group" style="margin-right: 10px;">
             <input id="btnRoomChange" data-action="CAMBIAR" type="button" class="btn btn-default toolbutton roomchange32x32" title="Trasladar pasajero a otra habitaci&oacute;n"/>
@@ -120,8 +121,28 @@ try {
         });
         $('input[class~="toolbutton"]').click(function(){
             if($(this).data('action')==='REFRESHPAGE'){$('.flex > div:nth-child(n).selected').removeClass('selected'); return;}
-             var _div = $('div .selected');
-             if( _div.length > 0){
+            var _div = $('div .selected');
+            if( _div.length > 0){
+                if($(this).data('action')==='PRINTCM'){
+                    if(_div.data('type')==='OCUPADA'){
+                        model={
+                            ID_REGISTRO: global.idtransaction
+                        };
+                        $.ajax({
+                            url: '../Controllers/RegistroPasajerosToPdf.php',
+                            data: model,
+                            dataType: 'text',
+                            type:'GET',
+                            success: function (data) {
+                               window.location.href = data;
+                            }
+                        });
+                        return;
+                    }else{
+                        alert('No puede realizar esta acci\u00F3n sobre una habitaci\u00F3n desocupada');
+                        return;
+                    }
+                }
                 if(confirm("\u00BFConfirma que desea realizar acci\u00F3n sobre habitaci\u00F3n seleccionada?")){
                     switch($(this).data('action')){
                         case 'CHECKIN':
@@ -140,7 +161,7 @@ try {
                             break;
                         case 'CAMBIAR': 
                             if(_div.data('type')!=='OCUPADA'){
-                                alert('No puede realizar esta acci\u00F3n sobre una habitaci\u00F3n desocupada');
+                                alert('No puede realizar esta acci\u00F3n sobre una habitaci\u00F3n desocupada....');
                                 break;
                             }
                             var targetlink = 'CambioHabitacion.php';
@@ -168,48 +189,6 @@ try {
              }
         });
     });
-        
-//    $(function(){
-//        var diagfp = $('#formasdepago').dialog({
-//            autoOpen: false,
-//            height: screen.availHeight * 75 /100,
-//            width: screen.availWidth * 50 /100,
-//            modal: true
-//        });        
-//        $.contextMenu({
-//            selector: '.flex > div:nth-child(n)', 
-//            trigger: 'right',
-//            delay: 500,
-//            itemClickEvent:'click',
-//            autoHide: true,
-//            callback:function(key, options) {
-//                if(key==='AGREGARPAGO'){
-//                    $("#ID_REGISTRO").val($(this).data('transaction_id'));
-//                    $('#formasdepago').load('FormasDePago.php');
-//                    diagfp.dialog('open');
-//                    //return false;
-//                }else{
-//                    $.ajax({
-//                       type:'GET',
-//                       url:'../Controllers/SetEstadoHabitaciones.php?habitacion='+$(this).data('value')+'&proceso='+key+'&idregistro='+$(this).data('transaction_id'),
-//                       datatype:'text',
-//                       success: function(data){
-//                           $('.content').load('Habitaciones.php');
-//                           alert(data);
-//                       }
-//                    });   
-//                }
-//            },
-//            items: {
-//            "LIBRE": {name: "Liberar", icon: "greenflag"},
-//            "LIMPIEZA": {name: "En proceso de aseo", icon: "clean"},
-//            "MANTENIMIENTO": {name: "Mantenimiento", icon: "cog"},
-//            "AGREGARPAGO": {name: "Agregar Pago", icon: "pay"},
-//            "CHECKOUT": {name: "CheckOut", icon: "checkout"}
-//        }
-//        });
-//});
-    
 </script>
 <input type="hidden" id="ID_REGISTRO" name="ID_REGISTRO" value="0"/>
 <div id="formasdepago"></div>
