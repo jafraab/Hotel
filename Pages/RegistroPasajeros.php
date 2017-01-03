@@ -49,8 +49,8 @@ Noviembre 2016
             var model ={
                 IDCLIENTE : $(this).val()
             };
-            $.getJSON('../Services/ClientesHandler.php',model, function(data){
-                $.each(data, function(){
+            $.getJSON('../Services/ClientesHandler.php',model, function(data){               
+                $.each(data, function(i, item){
                     $('#NOMBRE').val(data.NOMBRE_CLIENTE);
                     $('#NACIONALIDAD').val(data.NACIONALIDAD);
                     $('#CIUDAD').val(data.PROCEDENCIA);

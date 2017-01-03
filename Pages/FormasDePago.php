@@ -1,9 +1,28 @@
-<?php
+ <?php
 session_start();
+require_once ('../Services/Db.php');
 /* 
  * Desarrollado por : Jaime Francisco Altamirano Bustamante.
  * Noviembre 2016
  */
+function TraeSaldo(){
+    $idregistro = filter_input(INPUT_GET, 'ID_REGISTRO');
+    $My_Qry =
+        "
+        select (@deuda := regpas.valor_pp*regpas.dias_estadia) deuda, (@abonos := ifnull(sum(pagos.monto_cancelado), 0)) abonos , 
+        cast((@deuda-@abonos) as signed) saldo
+        from hot_formas_de_pago pagos
+        inner join hot_regpas regpas on regpas.id_registro = pagos.id_registro
+        where pagos.id_registro =".$idregistro;
+
+        $db = new Db();                
+        $qryresult = $db->ExecQuery($My_Qry);
+        if($qryresult->num_rows>0){
+            $row = $qryresult->fetch_assoc();
+            $saldo = $row['saldo'];
+            echo $saldo;
+        }
+}
 ?>
 <div class="container">
     <form rol="form" id="frmFormasDePago" method="POST">
@@ -81,20 +100,24 @@ session_start();
                 </div>
             </div>            
         </div>
+        <input type="hidden" id='ID_REGISTRO'/>
     </form>
 </div>
 <script>
+    $(document).ready(function(){
+        $('#ID_REGISTRO').val(global.idtransaction);
+    });
     var model ={
-        ID_REGISTRO: $('#ID_REGISTRO').val(),
+        ID_REGISTRO: global.idtransaction,
         ACCION:'QRY'
     };
     $.getJSON('../Controllers/FormasDePago.php',model, function(data){
         if(data !== null){
             $.each(data, function(){
                 $('input[name=TIPO_PAGO]:checked').val(data.tipo_pago || 1);
-                $('#MODALIDAD_PAGO').val(data.modalidad_pago);
+                $('#MODALIDAD_PAGO').val(data.modalidad_pago || 1);
                 $('#VOUCHER').val(data.voucher);
-                $('#TIPO_DOCUMENTO').val(data.tipo_documento);
+                $('#TIPO_DOCUMENTO').val(data.tipo_documento  || 1);
                 $('#NRO_DOCUMENTO_REFERENCIA').val(data.nro_documento_referencia);
                 $('#MONTO_CANCELADO').val(data.monto_cancelado);
                 $('#MONTO_ADEUDADO').val(data.monto_adeudado);
@@ -108,6 +131,7 @@ session_start();
             });
         }
     });
+    
     $('#MONTO_ADEUDADO').val($('#TOTAL').val());
     $('#MONTO_CANCELADO').focusout(function(){
         var cancela = $('#MONTO_CANCELADO').val() || 0;
@@ -115,7 +139,7 @@ session_start();
             alert('No se puede cancelar un moto mayor a lo que se adeuda');
             $('#MONTO_CANCELADO').val($('#SALDO').val());
         }
-        $('#SALDO').val($('#TOTAL').val() - cancela);
+        $('#SALDO').val($('#MONTO_ADEUDADO').val() - cancela);
     });
     $('#btnSaveFP').click(function(e){
         e.preventDefault();
@@ -125,13 +149,13 @@ session_start();
 //        }
 
         var model = {
-            ID_REGISTRO: $('#ID_REGISTRO').val(),
-            TIPO_PAGO:$('input[name=TIPO_PAGO]:checked').val(),
-            MODALIDAD_PAGO:$('#MODALIDAD_PAGO').val(),
-            VOUCHER:$('#VOUCHER').val()|| 0,
-            TIPO_DOCUMENTO:$('#TIPO_DOCUMENTO').val(),
-            NRO_DOCUMENTO_REFERENCIA:$('#NRO_DOCUMENTO_REFERENCIA').val() || 0,
-            MONTO_CANCELADO:$('#MONTO_CANCELADO').val(),
+            ID_REGISTRO: global.idtransaction,
+            TIPO_PAGO: $('input[name=TIPO_PAGO]:checked').val(),
+            MODALIDAD_PAGO: $('#MODALIDAD_PAGO').val(),
+            VOUCHER: $('#VOUCHER').val()|| 0,
+            TIPO_DOCUMENTO: $('#TIPO_DOCUMENTO').val(),
+            NRO_DOCUMENTO_REFERENCIA: $('#NRO_DOCUMENTO_REFERENCIA').val() || 0,
+            MONTO_CANCELADO: $('#MONTO_CANCELADO').val(),
             ACCION:'ADD'
         };
         $.ajax({

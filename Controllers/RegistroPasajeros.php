@@ -31,7 +31,8 @@ function AddNew(){
             $cliente = new Clientes();
             $cliente->AddClient();
         }
-    $msg =  'Registro guardado correctamente, '.$mycmdresult ;
+        
+        $msg =  'Registro guardado correctamente, '.$mycmdresult ;
     } catch (Exception $ex) { $msg =  'Error: '.$ex->getMessage(); }
     echo $msg;
 }

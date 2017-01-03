@@ -31,7 +31,7 @@ if(!$_SESSION){
 
 try {
         $q_MyCmd = 
-            "
+            " 
             select * from 
             (
             select 
@@ -39,27 +39,13 @@ try {
             , habitaciones.habitacion
             , habitaciones.tipo
             , habitaciones.camas
-            , t1.estado
-            , ifnull(t2.id_registro, 0) id_registro
+            , estado_h.estado
+            , estado_h.id_registro
             from hot_habitaciones habitaciones
-            left join
-            (
-            select mov.habitacion, mov.estado from hot_habitaciones_mov mov
-            where mov.fecha_mov in (select max(fecha_mov) from hot_habitaciones_mov where habitacion = mov.habitacion)
-            ) t1 on t1.habitacion = habitaciones.habitacion
-            left join 
-            (
-            select registro.habitacion, ifnull(max(registro.id_registro), 0) id_registro from hot_regpas registro 
-            where registro.habitacion 
-            in 
-            (
-                select mov_e.habitacion from hot_habitaciones_mov mov_e
-                where mov_e.fecha_mov in (select max(fecha_mov) from hot_habitaciones_mov where habitacion = mov_e.habitacion and mov_e.estado = 'OCUPADA') 
-            ) group by habitacion            
-            ) t2 on t2.habitacion = habitaciones.habitacion
+            left join hot_estado_habitaciones estado_h on estado_h.habitacion = habitaciones.habitacion
             UNION
             SELECT max(piso) + 1 piso, 99 habitacion, '' tipo, 99 camas, ' ' estado, 0 id_registro FROM hotel.hot_habitaciones    
-            ) habitaciones order by habitaciones.piso, habitaciones.habitacion
+            ) habitaciones order by habitaciones.piso, habitaciones.habitacion            
             ";
         $db = new Db();
         $resultset = $db->ExecQuery($q_MyCmd);
@@ -88,7 +74,8 @@ try {
                  "</div>".
                  "</div>"; 
             }
-            $resultset->free();
+            mysqli_free_result($resultset);
+            
         }
 }catch (Exception $ex) { echo  $ex->getMessage(); }
 ?>
@@ -103,16 +90,16 @@ try {
 <script src="../Scripts/jquery/jquery-ui.js" type="text/javascript"></script>
 <script>
     $(document).ready(function(){
-        var diagfp = $('#formasdepago').dialog({
-            autoOpen: false,
-            height: screen.availHeight * 75 /100,
-            width: screen.availWidth * 50 /100,
-            modal: true
-        });        
+//        var diagfp = $('#formasdepago').dialog({
+//            autoOpen: false,
+//            height: screen.availHeight * 75 /100,
+//            width: screen.availWidth * 50 /100,
+//            modal: true
+//        });        
         window.global={};
         global.Habitacion = 0;
         global.idtransaction=0;
-        
+        global.deuda = 0;
         $('.flex > div:nth-child(n)').click(function(){
             $('.flex > div:nth-child(n).selected').removeClass('selected');
             global.Habitacion = $(this).data('value');
@@ -146,6 +133,10 @@ try {
                 if(confirm("\u00BFConfirma que desea realizar acci\u00F3n sobre habitaci\u00F3n seleccionada?")){
                     switch($(this).data('action')){
                         case 'CHECKIN':
+                            if(_div.data('type')!=='LIBRE'){
+                                alert('Debe liberar la habitaci\u00F3n antes de realizar esta proceso.');
+                                break;
+                            }
                             var targetlink = 'RegistroPasajeros.php';
                             $('.content').load(targetlink);
                             return false;
@@ -155,9 +146,12 @@ try {
                                 alert('No puede realizar esta acci\u00F3n sobre una habitaci\u00F3n desocupada');
                                 break;
                             }
-                            $("#ID_REGISTRO").val(_div.data('transaction_id'));
-                            $('#formasdepago').load('FormasDePago.php');
-                            diagfp.dialog('open');                        
+                            var targetlink = 'FormasDePago.php';
+                            $('.content').load(targetlink);
+                            return false;
+                            //$("#ID_REGISTRO").val(_div.data('transaction_id'));
+                            //$('#formasdepago').load('FormasDePago.php');
+                            //diagfp.dialog('open');                        
                             break;
                         case 'CAMBIAR': 
                             if(_div.data('type')!=='OCUPADA'){

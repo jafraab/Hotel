@@ -89,7 +89,16 @@ and open the template in the editor.
         background: linear-gradient(to bottom, #f79621 0%,#f9c667 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f79621', endColorstr='#f9c667',GradientType=0 ); /* IE6-9 */      
    }
-   .flex > div:nth-child(n):hover { 
+   .flex > div:nth-child(n)[data-type='CAMBIO']{
+        /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f8ffe8+0,e3f5ab+33,b7df2d+100;Green+3D+%234 */
+        background: #f8ffe8; /* Old browsers */
+        background: -moz-linear-gradient(top, #f8ffe8 0%, #e3f5ab 33%, #b7df2d 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, #f8ffe8 0%,#e3f5ab 33%,#b7df2d 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #f8ffe8 0%,#e3f5ab 33%,#b7df2d 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8ffe8', endColorstr='#b7df2d',GradientType=0 ); /* IE6-9 */   
+        color:gray;
+    }
+    .flex > div:nth-child(n):hover { 
    		cursor: pointer; 
    		opacity: 0.9; 
 		-webkit-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.75);

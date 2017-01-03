@@ -23,27 +23,12 @@ function GetLibres(){
         , habitaciones.habitacion
         , habitaciones.tipo
         , habitaciones.camas
-        , t1.estado
-        , ifnull(t2.id_registro, 0) id_registro
+        , estado_h.estado
+        , estado_h.id_registro
         from hot_habitaciones habitaciones
-        left join
-        (
-        select mov.habitacion, mov.estado from hot_habitaciones_mov mov
-        where mov.fecha_mov in (select max(fecha_mov) from hot_habitaciones_mov where habitacion = mov.habitacion)
-        ) t1 on t1.habitacion = habitaciones.habitacion
-        left join 
-        (
-        select registro.habitacion, ifnull(max(registro.id_registro), 0) id_registro from hot_regpas registro 
-        where registro.habitacion 
-        in 
-        (
-            select mov_e.habitacion from hot_habitaciones_mov mov_e
-            where mov_e.fecha_mov in (select max(fecha_mov) from hot_habitaciones_mov where habitacion = mov_e.habitacion and mov_e.estado = 'OCUPADA') 
-        ) group by habitacion            
-        ) t2 on t2.habitacion = habitaciones.habitacion
-        ) habitaciones where habitaciones.estado = 'LIBRE' 
-        or habitaciones.habitacion not in (select habitacion from hot_habitaciones_mov)
-        order by habitaciones.piso, habitaciones.habitacion              
+        left join hot_estado_habitaciones estado_h on estado_h.habitacion = habitaciones.habitacion
+        where estado_h.estado = 'LIBRE' or estado_h.estado is null
+        ) habitaciones order by habitaciones.piso, habitaciones.habitacion  
     ";
         $db = new Db();
         $resultset = $db->ExecQuery($q_MyCmd);
@@ -56,6 +41,7 @@ function GetLibres(){
             $html .= "</select>";
             echo $html;
         }
+        mysqli_free_result($resultset);
 } catch (Exception $ex) { echo  $ex->getMessage(); }
 }
 
