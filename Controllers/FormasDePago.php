@@ -60,6 +60,8 @@ function SelById($p_idregistro){
     (
     SELECT 
     regpas.id_registro
+    , regpas.habitacion
+    , clientes.nombre_cliente cliente
     , ifnull(forma_pago.tipo_pago, 1) tipo_pago
     , ifnull(forma_pago.modalidad_pago, 0) modalidad_pago
     , ifnull(forma_pago.voucher, 0) voucher
@@ -67,14 +69,18 @@ function SelById($p_idregistro){
     , ifnull(forma_pago.nro_documento_referencia, 0) nro_documento_referencia
     FROM hotel.hot_regpas regpas
     left join hot_formas_de_pago forma_pago on regpas.id_registro = forma_pago.id_registro
+    inner join hot_clientes clientes on clientes.id_cliente = regpas.id_cliente
     where regpas.id_registro = ".$p_idregistro."
 	) t1 left join
     (
-    select regpas.id_registro, (@deuda := regpas.valor_pp*regpas.dias_estadia) deuda, (@abonos := ifnull(sum(pagos.monto_cancelado), 0)) abonos , 
+    select 
+    regpas.id_registro, 
+    (@deuda := regpas.valor_pp*regpas.dias_estadia) deuda, 
+    (@abonos := ifnull(sum(pagos.monto_cancelado), 0)) abonos , 
     cast((@deuda-@abonos) as signed) saldo
     from hot_formas_de_pago pagos
-    inner join hot_regpas regpas on regpas.id_registro = pagos.id_registro
-    where pagos.id_registro = regpas.id_registro and regpas.id_registro = ".$p_idregistro."
+    right join hot_regpas regpas on regpas.id_registro = pagos.id_registro
+    where regpas.id_registro = ".$p_idregistro."
     ) t2 on t2.id_registro = t1.id_registro
     ";
     $db = new Db();

@@ -61,8 +61,8 @@ function ConsultaPagos($idcliente){
     (
         SELECT 
         registro.id_registro
+        , registro.fecha_registro
         , DATE_FORMAT(STR_TO_DATE(registro.hora_ingreso, '%d/%m/%Y %H:%i:%S'), '%d/%m/%Y %H:%i:%S') fecha
-        , 0 rownum
         , registro.id_cliente
         , clientes.nombre_cliente cliente
         , registro.habitacion
@@ -75,19 +75,19 @@ function ConsultaPagos($idcliente){
         union
         SELECT 
         pagos.id_registro
+        ,pagos.fecha_registro
         , DATE_FORMAT(pagos.fecha_registro, '%d/%m/%Y %H:%i:%S') fecha
-        , @rownum:=@rownum + 1 AS rownum
         , hot_regpas.id_cliente 
         , ' ' cliente
-        , 0 habitacion
+        , hot_regpas.habitacion
         , 0 valor_pp
         , 0 dias_estadia
         , 0 total_adeudado
         , monto_cancelado abonos
         from hotel.hot_formas_de_pago pagos
         inner join hot_regpas on hot_regpas.id_registro = pagos.id_registro
-    ) t1, (SELECT @rownum := 0) r
-    order by t1.id_registro asc, t1.fecha asc, t1.rownum asc";
+    ) t1
+    order by t1.id_registro asc, t1.fecha_registro asc";
 //    $q_MyCmd += " where id_cliente = ".$idcliente;
 //    $q_MyCmd += " order by t1.id_registro asc, t1.fecha asc, t1.rownum asc";
     

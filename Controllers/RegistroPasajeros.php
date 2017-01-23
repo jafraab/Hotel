@@ -28,11 +28,13 @@ function AddNew(){
         $mycmdresult = $db->ExecProcParam($i_MyCmd, '@p_id_registro');
         if(!$mycmdresult){ $msg =  "Error: El registro no pudo ser guardado"; }
         else{
+            $updestadosqry = "call sp_set_estado_habitaciones(".filter_input(INPUT_POST, 'HABITACION').", 'OCUPADA', ".$mycmdresult.")";
+            $updestados = $db->ExecProc($updestadosqry);
+            
             $cliente = new Clientes();
             $cliente->AddClient();
         }
-        
-        $msg =  'Registro guardado correctamente, '.$mycmdresult ;
+        $msg =  'Registro guardado correctamente,'.$mycmdresult ;
     } catch (Exception $ex) { $msg =  'Error: '.$ex->getMessage(); }
     echo $msg;
 }

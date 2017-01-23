@@ -15,11 +15,14 @@ Noviembre 2016
 <!--<script src="../Scripts/bootstrap-datepicker/js/bootstrap-datepicker.js" type="text/javascript"></script>-->
 <script src="../Scripts/jquery/jquery.validate.js" type="text/javascript"></script>
 <script src="../Scripts/datetimepicker/js/jquery.datetimepicker.js" type="text/javascript"></script>
+<script src="../Scripts/jquery/jquery.rut.chileno.min.js" type="text/javascript"></script>
 <script src="../Scripts/AppApi.js" type="text/javascript"></script>
 <script>
     $(document).ready(function(){
         //Settings  
         $('#btnFormaDePago').hide();
+        $('#btnPrint').hide();
+        $('#btnLimpiar').remove();
         if(parseInt(global.Habitacion) > 0){
             $('#HABITACION').val(global.Habitacion).attr('readonly', true);
         }
@@ -28,6 +31,7 @@ Noviembre 2016
             $('div.caption').find('strong').html(' [ID: '+$('#ID_REGISTRO').val()+']');
             $('#btnGuardar').remove();
             $('#btnLimpiar').remove();
+            $('#btnPrint').show();
         }
         var diagfp = $('#formasdepago').dialog({
             autoOpen: false,
@@ -38,12 +42,15 @@ Noviembre 2016
         //Eventos Locales
         $('#btnFormaDePago').click(function(e){
             e.preventDefault();
-            $('#formasdepago').load('FormasDePago.php');
-            diagfp.dialog('open');
-            return false;
+            //$('#formasdepago').load('FormasDePago.php');
+            //diagfp.dialog('open');
+            //return false;
+            var targetlink = 'FormasDePago.php';
+            $('.content').load(targetlink);
         });
         $('#HORA_INGRESO').CurrentDateTime();
         $('#ID_CLIENTE').blur(function(){
+            //$(this).rut();
             $('input[class^="pac"]').val('');
             $('input[class^="pac"]').attr('readonly', false);
             var model ={
@@ -82,8 +89,13 @@ Noviembre 2016
                 success: function (data) {
                     var jdata = data.split(',');
                     $('#ID_REGISTRO').val(jdata[1]);
+                    global.idtransaction = $('#ID_REGISTRO').val();                 
+                    if(parseInt(jdata[1]) > 0){
+                        $('#btnFormaDePago').show();
+                        $('#btnPrint').show();
+                        $($(this)).attr('display', 'none');
+                    }
                     alert(jdata[0].trim()+ ". Id referencia: "+jdata[1]);
-                    $('#btnFormaDePago').show();
                 }
             });
         });
@@ -198,7 +210,7 @@ Noviembre 2016
     <div class="form-group " >
         <label for="VALOR" class='control-label col-sm-3'>Valor Hab.</label>
         <div class='col-lg-1'>
-            <input type="text" id="VALOR" name="VALOR" data-type='number' class="form-control text-center" style="min-width: 75px;"/>
+            <input type="text" id="VALOR" name="VALOR" data-type='number' data-required='Debe indicar valor' class="form-control text-center" style="min-width: 75px;"/>
         </div>
         <div class='col-lg-1'>
             <input type="text" id="TOTAL" name="TOTAL"  class="form-control text-center disabled" disabled="" placeholder="A cobrar" style="min-width: 75px;"/><span style='font-size: 9px; color:red;'>Con Iva</span>            

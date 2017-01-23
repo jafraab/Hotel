@@ -9,6 +9,7 @@
         </div>
         <div class="toolbuttoncontainer btn-group" style="margin-right: 10px;">
             <input id="btnAgregarPago" data-action="AGREGARPAGO"  type="button" class="btn btn-default toolbutton pay32x32" title="Registrar pago o abono"/>
+            <input id="btnEstadoCta" data-action="ESTADOCTA"  type="button" class="btn btn-default toolbutton account32x32" title="Ver estado de cuenta"/>
         </div>
         <div class="toolbuttoncontainer btn-group" style="margin-right: 10px;">
             <input id="btnCheckout" data-action="CHECKOUT" type="button" class="btn btn-default toolbutton checkout32x32" title="CheckOut"/>
@@ -40,7 +41,7 @@ try {
             , habitaciones.tipo
             , habitaciones.camas
             , estado_h.estado
-            , estado_h.id_registro
+            , ifnull(estado_h.id_registro, 0) id_registro
             from hot_habitaciones habitaciones
             left join hot_estado_habitaciones estado_h on estado_h.habitacion = habitaciones.habitacion
             UNION
@@ -130,6 +131,15 @@ try {
                         return;
                     }
                 }
+                if($(this).data('action')==='ESTADOCTA'){
+                    if(_div.data('type')!=='OCUPADA'){
+                        alert('No puede realizar esta acci\u00F3n sobre una habitaci\u00F3n desocupada....');
+                        return;
+                    }
+                    var targetlink = 'EstadoCuenta.php?ID_REGISTRO='+global.idtransaction;
+                    $('.content').load(targetlink);
+                    return;
+                }              
                 if(confirm("\u00BFConfirma que desea realizar acci\u00F3n sobre habitaci\u00F3n seleccionada?")){
                     switch($(this).data('action')){
                         case 'CHECKIN':
